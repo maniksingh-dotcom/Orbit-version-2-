@@ -1,0 +1,123 @@
+.wrapper {
+  position: relative;
+  padding: 0.5rem 0.625rem;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 0.25rem;
+}
+
+/* ── Trigger button ── */
+.trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  background: var(--bg-surface-2);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 0.45rem 0.6rem;
+  cursor: pointer;
+  transition: background var(--t-fast), border-color var(--t-fast);
+  min-width: 0;
+}
+
+.trigger:hover {
+  background: rgba(99,102,241,0.08);
+  border-color: rgba(99,102,241,0.3);
+}
+
+.triggerCollapsed {
+  justify-content: center;
+  padding: 0.45rem;
+}
+
+.triggerName {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+  font-family: var(--font-heading);
+}
+
+.chevron {
+  flex-shrink: 0;
+  color: var(--text-muted);
+  transition: transform 200ms ease-out;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+/* ── Company letter avatar ── */
+.companyLetter {
+  border-radius: 6px;
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+  color: #fff;
+  font-weight: 800;
+  font-family: var(--font-heading);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  letter-spacing: -0.02em;
+}
+
+/* ── Dropdown ── */
+.dropdown {
+  position: absolute;
+  top: calc(100% - 0.25rem);
+  left: 0.625rem;
+  right: 0.625rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3), 0 2px 8px rgba(0,0,0,0.15);
+  z-index: 9999;
+  padding: 0.3rem;
+  min-width: 180px;
+}
+
+.dropdownHeader {
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  padding: 0.3rem 0.5rem 0.35rem;
+}
+
+.dropdownItem {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.6rem;
+  cursor: pointer;
+  transition: background var(--t-fast);
+  font-family: var(--font-body);
+  min-width: 0;
+}
+
+.dropdownItem:hover { background: var(--bg-surface-2); }
+
+.dropdownItemActive { background: var(--accent-subtle) !important; }
+
+.dropdownItemName {
+  font-size: 0.825rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+  flex: 1;
+  min-width: 0;
+}

@@ -1,0 +1,110 @@
+/* ════════════════════════════════════════
+   LOGIN PAGE
+════════════════════════════════════════ */
+
+.container {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.glowOrb {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 480px;
+  height: 480px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.12), transparent 65%);
+  filter: blur(60px);
+  pointer-events: none;
+  animation: orbFloat 8s ease-in-out infinite;
+}
+
+@keyframes orbFloat {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50%       { transform: translate(-50%, -52%) scale(1.04); }
+}
+
+.card {
+  position: relative;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  padding: var(--space-10);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+}
+
+.logoSection {
+  margin-bottom: var(--space-8);
+}
+
+.logo {
+  font-family: var(--font-heading);
+  font-size: 2.25rem;
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  color: var(--text-primary);
+}
+
+.logo span {
+  color: var(--accent-primary);
+}
+
+.tagline {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-top: var(--space-2);
+}
+
+.googleBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 1.25rem;
+  background: #fff;
+  color: #1a1a1a;
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform var(--t-fast), box-shadow var(--t-fast);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.googleBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+
+.footer {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  margin-top: var(--space-6);
+}
+
+.privacyLink {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  margin-top: var(--space-4);
+}
+
+.privacyLink a {
+  color: var(--accent-primary);
+  text-decoration: underline;
+  transition: color var(--t-fast);
+}
+
+.privacyLink a:hover {
+  color: var(--accent-hover);
+}

@@ -1,0 +1,436 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Auth.js required models
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  role          String    @default("employee")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts          Account[]
+  sessions          Session[]
+  customers         Customer[]         @relation("CustomerOwner")
+  notes             Note[]
+  teamNotes         TeamNote[]
+  actionItems       ActionItem[]
+  groupMessages     GroupMessage[]
+  notifications     Notification[]    @relation("notifications")
+  notificationsSent Notification[]    @relation("notificationsSent")
+  emailReplies         EmailReply[]
+  fathomAccount        FathomAccount?
+  calendarTranscripts  CalendarTranscript[]
+  calendarAttachments  CalendarEventAttachment[]
+  meetingSummaries     MeetingSummary[]
+  companyMemberships   CompanyMember[]
+  createdCompanies     Company[]          @relation("CompanyCreator")
+  customerActivities   CustomerActivity[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// Business models
+
+model Customer {
+  id           String   @id @default(cuid())
+  name         String
+  age          Int?
+  customerType String   @default("individual")
+  companyName  String?
+  country      String?
+  state        String?
+  email        String?
+  phone        String?
+  website      String?
+  logoUrl      String?
+  description  String?
+  mandateScope            String?
+  mandateCompensation     String?
+  mandateExclusivity      String?
+  mandateLegalProtections String?
+  mandateTransactionDef   String?
+  pipelineStage    String    @default("new")
+  leadStatus       String    @default("warm")
+  lastContactedAt  DateTime?
+  nextFollowUpAt   DateTime?
+  contactedVia     String    @default("")
+  companyId        String?
+  healthScore      Int?
+  customerStage    String    @default("lead")
+  onboardingStatus String    @default("not_started")
+  renewalDate      DateTime?
+  riskLevel        String    @default("low")
+  qbrDate          DateTime?
+  dealValue        Float?
+  userId       String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  owner            User                 @relation("CustomerOwner", fields: [userId], references: [id], onDelete: Cascade)
+  company          Company?             @relation(fields: [companyId], references: [id], onDelete: SetNull)
+  notes            Note[]
+  documents        Document[]
+  teamNotes        TeamNote[]
+  actionItems      ActionItem[]
+  groups           GroupMember[]
+  meetingSummaries MeetingSummary[]
+  activities       CustomerActivity[]
+  meetingIntelligence MeetingIntelligence[]
+}
+
+model Group {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  members     GroupMember[]
+  messages    GroupMessage[]
+  teamNotes   TeamNote[]
+  actionItems ActionItem[]
+
+  @@map("DealRoom")
+}
+
+model GroupMessage {
+  id        String   @id @default(cuid())
+  content   String
+  groupId   String   @map("dealRoomId")
+  userId    String
+  createdAt DateTime @default(now())
+
+  group Group @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("DealRoomMessage")
+}
+
+model GroupMember {
+  id         String   @id @default(cuid())
+  groupId    String   @map("dealRoomId")
+  customerId String
+  createdAt  DateTime @default(now())
+
+  group    Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, customerId])
+  @@map("DealRoomCustomer")
+}
+
+model Note {
+  id         String   @id @default(cuid())
+  fathomId   String?  @unique
+  title      String
+  content    String
+  source     String   @default("manual")
+  addedBy    String   @default("Admin")
+  userId     String?
+  customerId String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  user     User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+model Document {
+  id            String   @id @default(cuid())
+  title         String
+  filePath      String
+  fileType      String
+  mimeType      String
+  transcription String?
+  customerId    String
+  uploadedBy    String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+}
+
+model TeamNote {
+  id          String   @id @default(cuid())
+  content     String
+  userId      String
+  customerId  String?
+  groupId     String?  @map("dealRoomId")
+  meetingId   String?
+  source      String   @default("manual")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  customer    Customer?           @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  group       Group?              @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  attachments TeamNoteAttachment[]
+}
+
+model TeamNoteAttachment {
+  id         String   @id @default(cuid())
+  teamNoteId String
+  filePath   String
+  fileName   String
+  fileType   String
+  mimeType   String
+  createdAt  DateTime @default(now())
+
+  teamNote TeamNote @relation(fields: [teamNoteId], references: [id], onDelete: Cascade)
+}
+
+model ActionItem {
+  id          String    @id @default(cuid())
+  title       String
+  completed   Boolean   @default(false)
+  status      String    @default("todo")
+  assigneeId  String?
+  dueDate     DateTime?
+  priority    String    @default("medium")
+  taskType    String    @default("todo")
+  notes       String?
+  reminderAt  DateTime?
+  userId      String
+  customerId  String?
+  groupId     String?   @map("dealRoomId")
+  meetingId   String?
+  companyId   String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  customer Customer? @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  group    Group?    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  company  Company?  @relation(fields: [companyId], references: [id], onDelete: SetNull)
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  fromId    String?
+  type      String
+  message   String
+  link      String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user User  @relation("notifications", fields: [userId], references: [id], onDelete: Cascade)
+  from User? @relation("notificationsSent", fields: [fromId], references: [id], onDelete: SetNull)
+}
+
+model MeetingSummary {
+  id              String   @id @default(cuid())
+  fathomId        String?  @unique
+  title           String
+  date            DateTime
+  duration        Int?
+  attendeeCount   Int?
+  attendees       String?
+  summary         String?
+  actionItems     String?
+  recordingUrl    String?
+  customerId      String?
+  userId          String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  customer        Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  user            User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  intelligence    MeetingIntelligence?
+}
+
+model MeetingIntelligence {
+  id                String   @id @default(cuid())
+  meetingId         String   @unique
+  customerId        String?
+  sentiment         String   // positive | neutral | negative | mixed
+  dealRisk          String   // none | low | medium | high | critical
+  riskReasons       Json     // string[]
+  competitors       Json     // string[]
+  objections        Json     // string[]
+  keyTopics         Json     // string[]
+  nextStepConfirmed Boolean
+  talkRatio         Float?   // 0-1, rep share of talking
+  excitement        Int?     // 1-10
+  aiSummary         String?
+  analyzedAt        DateTime @default(now())
+
+  meeting  MeetingSummary @relation(fields: [meetingId], references: [id], onDelete: Cascade)
+  customer Customer?      @relation(fields: [customerId], references: [id], onDelete: SetNull)
+}
+
+model EmailReply {
+  id              String   @id @default(cuid())
+  emailThreadId   String
+  emailMessageId  String
+  to              String
+  subject         String
+  body            String
+  userId          String
+  createdAt       DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([emailThreadId])
+  @@index([emailMessageId])
+}
+
+model FathomAccount {
+  id           String    @id @default(cuid())
+  userId       String    @unique
+  accessToken  String
+  refreshToken String?
+  expiresAt    DateTime?
+  scope        String?
+  tokenType    String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model CalendarTranscript {
+  id        String   @id @default(cuid())
+  eventId   String
+  userId    String
+  content   String
+  fileName  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, userId])
+}
+
+model CalendarEventAttachment {
+  id        String   @id @default(cuid())
+  eventId   String
+  userId    String
+  filePath  String
+  publicUrl String
+  fileName  String
+  fileType  String
+  mimeType  String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([eventId, userId])
+}
+
+model Company {
+  id          String   @id @default(cuid())
+  name        String
+  logoUrl     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  createdById String
+
+  createdBy      User             @relation("CompanyCreator", fields: [createdById], references: [id])
+  members        CompanyMember[]
+  pendingInvites PendingInvite[]
+  customers      Customer[]
+  actionItems    ActionItem[]
+}
+
+model PendingInvite {
+  id        String   @id @default(cuid())
+  email     String
+  companyId String
+  role      String   @default("member")
+  createdAt DateTime @default(now())
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, email])
+}
+
+model CompanyMember {
+  id        String   @id @default(cuid())
+  companyId String
+  userId    String
+  role      String   @default("member")
+  createdAt DateTime @default(now())
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([companyId, userId])
+}
+
+model CustomerActivity {
+  id          String   @id @default(cuid())
+  customerId  String
+  userId      String
+  type        String
+  title       String
+  description String?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id])
+}
+
+model PipelineStage {
+  id        String   @id @default(cuid())
+  companyId String?
+  userId    String?
+  label     String
+  key       String
+  color     String   @default("#6366f1")
+  order     Int
+  isWon     Boolean  @default(false)
+  isLost    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

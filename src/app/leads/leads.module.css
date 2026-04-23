@@ -1,0 +1,153 @@
+/* Pipeline Funnel */
+
+.funnelRow {
+  display: grid;
+  grid-template-columns: 90px 1fr 44px 64px;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.funnelLabel {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-align: right;
+}
+
+.funnelTrack {
+  height: 28px;
+  background: var(--bg-surface-2);
+  border-radius: 0.375rem;
+  overflow: hidden;
+}
+
+.funnelBar {
+  height: 100%;
+  border-radius: 0.375rem;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.funnelCount {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-align: left;
+}
+
+.funnelValue {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-align: left;
+}
+
+.conversionArrow {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.1rem 0 0.1rem 90px;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+}
+
+/* Three-column grid */
+
+.threeCol {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: var(--space-lg);
+}
+
+/* Overdue list */
+
+.overdueList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  max-height: 320px;
+  overflow-y: auto;
+}
+
+.overdueRow {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.6rem;
+  border-radius: 0.4rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  text-decoration: none;
+  color: inherit;
+  transition: background 0.15s;
+}
+
+.overdueRow:hover {
+  background: var(--bg-surface-2);
+}
+
+/* Lead Sources */
+
+.sourceRow {
+  display: grid;
+  grid-template-columns: 72px 1fr 32px 36px;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.sourceLabel {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sourceTrack {
+  height: 18px;
+  background: var(--bg-surface-2);
+  border-radius: 0.25rem;
+  overflow: hidden;
+}
+
+.sourceBar {
+  height: 100%;
+  background: var(--accent-primary);
+  opacity: 0.6;
+  border-radius: 0.25rem;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sourceCount {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.sourceWinRate {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #22c55e;
+  text-align: right;
+}
+
+/* Responsive */
+
+@media (max-width: 900px) {
+  .threeCol {
+    grid-template-columns: 1fr;
+  }
+
+  .funnelRow {
+    grid-template-columns: 80px 1fr 40px;
+  }
+
+  .funnelValue {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .funnelRow {
+    grid-template-columns: 70px 1fr 36px;
+  }
+}
