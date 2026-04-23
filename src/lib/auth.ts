@@ -40,9 +40,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         email === 'int-manik.singh@emversity.com' ||
         email.endsWith('@valencegrowthpartners.com');
       if (allowed) return true;
-      // Also allow users who have a pending invite
-      const invite = await prisma.pendingInvite.findFirst({ where: { email } });
-      return !!invite;
+      try {
+        const invite = await prisma.pendingInvite.findFirst({ where: { email } });
+        return !!invite;
+      } catch {
+        return false;
+      }
     },
     async session({ session, user }) {
       if (session.user) {
